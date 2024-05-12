@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_qrscan/providers/scan_list_provider.dart';
 import 'package:flutter_qrscan/utils/utils.dart';
+import 'package:provider/provider.dart';
 
 class ScanTiles extends StatelessWidget {
   final String type;
 
-  ScanTiles({@required this.type});
+  const ScanTiles({super.key, required this.type});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class ScanTiles extends StatelessWidget {
     final scans = scanListProvider.scans;
 
     if (scans.isEmpty) {
-      return Center(
+      return const Center(
         child: Text("No results"),
       );
     }
@@ -23,12 +23,12 @@ class ScanTiles extends StatelessWidget {
       itemCount: scans.length,
       itemBuilder: (_, i) => ListTile(
         leading: Icon(
-          this.type == "http" ? Icons.home_outlined : Icons.map_outlined,
+          type == "http" ? Icons.home_outlined : Icons.map_outlined,
           color: Theme.of(context).primaryColor,
         ),
         title: Text(scans[i].value),
         subtitle: Text(scans[i].id.toString()),
-        trailing: Icon(Icons.keyboard_arrow_right, color: Colors.grey),
+        trailing: const Icon(Icons.keyboard_arrow_right, color: Colors.grey),
         onTap: () => launchURL(context, scans[i]),
       ),
     );

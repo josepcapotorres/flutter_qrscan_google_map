@@ -5,17 +5,23 @@ import 'package:flutter_qrscan/models/scan_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapPage extends StatefulWidget {
+  const MapPage({super.key});
+
   @override
-  _MapPageState createState() => _MapPageState();
+  State<MapPage> createState() => _MapPageState();
 }
 
 class _MapPageState extends State<MapPage> {
-  Completer<GoogleMapController> _controller = Completer();
+  final Completer<GoogleMapController> _controller = Completer();
   MapType _mapType = MapType.normal;
 
   @override
   Widget build(BuildContext context) {
-    final ScanModel scan = ModalRoute.of(context).settings.arguments;
+    final scan = ModalRoute.of(context)?.settings.arguments as ScanModel?;
+
+    if (scan == null) {
+      return const Center(child: Text("No se ha encontrado la url"));
+    }
 
     final initialPoint = CameraPosition(
       target: scan.getLatLng(),
@@ -24,22 +30,29 @@ class _MapPageState extends State<MapPage> {
     );
 
     // Markers
-    Set<Marker> markers = new Set<Marker>();
+    Set<Marker> markers = <Marker>{};
     markers.add(
-        Marker(markerId: MarkerId("geo-location"), position: scan.getLatLng()));
+      Marker(
+        markerId: const MarkerId("geo-location"),
+        position: scan.getLatLng(),
+      ),
+    );
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Map"),
+        title: const Text("Map"),
         actions: [
           IconButton(
-            icon: Icon(Icons.location_disabled),
+            icon: const Icon(Icons.location_disabled),
             onPressed: () async {
               final GoogleMapController controller = await _controller.future;
               controller.animateCamera(
                 CameraUpdate.newCameraPosition(
                   CameraPosition(
-                      target: scan.getLatLng(), zoom: 17.5, tilt: 50),
+                    target: scan.getLatLng(),
+                    zoom: 17.5,
+                    tilt: 50,
+                  ),
                 ),
               );
             },
@@ -56,17 +69,15 @@ class _MapPageState extends State<MapPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.layers),
+        child: const Icon(Icons.layers),
         onPressed: () {
           if (_mapType == MapType.normal) {
             _mapType = MapType.satellite;
-          }else{
+          } else {
             _mapType = MapType.normal;
           }
 
-          setState(() {
-            
-          });
+          setState(() {});
         },
       ),
     );
